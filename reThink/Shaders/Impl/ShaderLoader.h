@@ -1,7 +1,7 @@
 ﻿#ifndef SHADERLOADER_H
 #define SHADERLOADER_H
 
-#include "IShaderLoader.h"
+#include "../Interface/IShaderLoader.h"
 
 class ShaderLoader : public IShaderLoader {
 public:

@@ -16,6 +16,12 @@
     <Filter Include="头文件\Impl">
       <UniqueIdentifier>{e1fe257c-0774-4c78-82a9-dc16af182bbc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\ShaderTools">
+      <UniqueIdentifier>{e15b58ca-dd8d-4f75-b2df-dd0578421fd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Interface">
+      <UniqueIdentifier>{0bda71ff-0b0e-40e4-8c05-ad4563d218f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Intro\Intro\Intro\glad.c">
@@ -24,34 +30,34 @@
     <ClCompile Include="Window.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="Shaders\ShaderTools\CheckShaderCompileErrors.cpp">
+      <Filter>源文件\ShaderTools</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderLoader.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="Shaders\ShaderTools\Shader.cpp">
+      <Filter>源文件\ShaderTools</Filter>
     </ClCompile>
-    <ClCompile Include="CheckShaderCompileErrors.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="Shaders\ShaderTools\ShaderLoader.cpp">
+      <Filter>源文件\ShaderTools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="IShader.h">
+    <ClInclude Include="Shaders\Impl\CheckShaderCompileErrors.h">
       <Filter>头文件\Impl</Filter>
     </ClInclude>
-    <ClInclude Include="IShaderLoader.h">
+    <ClInclude Include="Shaders\Impl\Shader.h">
       <Filter>头文件\Impl</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderLoader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ICheckCompileErrors.h">
+    <ClInclude Include="Shaders\Impl\ShaderLoader.h">
       <Filter>头文件\Impl</Filter>
     </ClInclude>
-    <ClInclude Include="CheckShaderCompileErrors.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="Shaders\Interface\ICheckCompileErrors.h">
+      <Filter>头文件\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\Interface\IShader.h">
+      <Filter>头文件\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\Interface\IShaderLoader.h">
+      <Filter>头文件\Interface</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

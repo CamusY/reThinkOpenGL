@@ -1,7 +1,7 @@
 ﻿#ifndef SHADER_H
 #define SHADER_H
 
-#include "IShader.h"
+#include "../Interface/IShader.h"
 
 
 class Shader : public IShader {

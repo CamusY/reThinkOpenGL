@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Projects\TA\OpenGLProjects\OpenGLIncludes\includes;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Projects\TA\OpenGLProjects\OpenGLIncludes\includes;D:\Projects\TA\OpenGLProjects\reThink\reThink\Shaders;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Projects\TA\OpenGLProjects\OpenGLIncludes\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -108,12 +108,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalOptions>/utf8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Projects\TA\OpenGLProjects\reThink\reThink\Shaders;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,18 +134,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Intro\Intro\Intro\glad.c" />
-    <ClCompile Include="CheckShaderCompileErrors.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ShaderLoader.cpp" />
+    <ClCompile Include="Shaders\ShaderTools\CheckShaderCompileErrors.cpp" />
+    <ClCompile Include="Shaders\ShaderTools\Shader.cpp" />
+    <ClCompile Include="Shaders\ShaderTools\ShaderLoader.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CheckShaderCompileErrors.h" />
-    <ClInclude Include="IShader.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="IShaderLoader.h" />
-    <ClInclude Include="ShaderLoader.h" />
-    <ClInclude Include="ICheckCompileErrors.h" />
+    <ClInclude Include="Shaders\Impl\CheckShaderCompileErrors.h" />
+    <ClInclude Include="Shaders\Impl\Shader.h" />
+    <ClInclude Include="Shaders\Impl\ShaderLoader.h" />
+    <ClInclude Include="Shaders\Interface\ICheckCompileErrors.h" />
+    <ClInclude Include="Shaders\Interface\IShader.h" />
+    <ClInclude Include="Shaders\Interface\IShaderLoader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

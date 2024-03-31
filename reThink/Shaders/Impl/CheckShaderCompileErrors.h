@@ -1,7 +1,7 @@
 ﻿#ifndef CHECKSHADERCOMPILEERRORS_H
 #define CHECKSHADERCOMPILEERRORS_H
 
-#include "ICheckCompileErrors.h"
+#include "../Interface/ICheckCompileErrors.h"
 
 #include <string>
 class CheckShaderCompileErrors : public ICheckCompileErrors {
