@@ -134,7 +134,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Intro\Intro\Intro\glad.c" />
+    <ClCompile Include="CheckShaderCompileErrors.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CheckShaderCompileErrors.h" />
+    <ClInclude Include="IShader.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="IShaderLoader.h" />
+    <ClInclude Include="ShaderLoader.h" />
+    <ClInclude Include="ICheckCompileErrors.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

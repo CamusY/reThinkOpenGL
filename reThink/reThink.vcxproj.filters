@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\Impl">
+      <UniqueIdentifier>{e1fe257c-0774-4c78-82a9-dc16af182bbc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Intro\Intro\Intro\glad.c">
@@ -21,5 +24,34 @@
     <ClCompile Include="Window.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderLoader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckShaderCompileErrors.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Shader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IShader.h">
+      <Filter>头文件\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="IShaderLoader.h">
+      <Filter>头文件\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderLoader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ICheckCompileErrors.h">
+      <Filter>头文件\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckShaderCompileErrors.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
