@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Projects\TA\OpenGLProjects\OpenGLIncludes\includes;D:\Projects\TA\OpenGLProjects\reThink\reThink\Shaders;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Projects\TA\OpenGLProjects\reThink\reThink\Shaders;D:\Projects\TA\OpenGLProjects\OpenGLIncludes\includes</IncludePath>
     <LibraryPath>D:\Projects\TA\OpenGLProjects\OpenGLIncludes\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

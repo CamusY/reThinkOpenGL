@@ -1,6 +1,6 @@
-﻿#include "Shader.h"
-#include "ShaderLoader.h"
-#include "CheckShaderCompileErrors.h"
+﻿#include "../Impl/Shader.h"
+#include "../Impl/ShaderLoader.h"
+#include "../Impl/CheckShaderCompileErrors.h"
 
 #include <glad/glad.h>
 
