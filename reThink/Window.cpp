@@ -36,7 +36,7 @@ int main() {
 		return -1;
 	}
 
-	Shader testShader("../Shaders/shader.vs", "../Shaders/shader.vs");
+	Shader testShader("D:\\Projects\\TA\\OpenGLProjects\\reThink\\reThink\\Shaders\\shader.vs", "D:\\Projects\\TA\\OpenGLProjects\\reThink\\reThink\\Shaders\\shader.fs");
 
 	float vertices[] = {
 		// 位置         // 颜色
@@ -79,6 +79,10 @@ int main() {
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	
 	glfwTerminate();
 	return 0;
 

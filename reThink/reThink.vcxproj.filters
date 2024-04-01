@@ -22,6 +22,9 @@
     <Filter Include="头文件\Interface">
       <UniqueIdentifier>{0bda71ff-0b0e-40e4-8c05-ad4563d218f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\Shaders">
+      <UniqueIdentifier>{64430d8a-b2d6-45ac-bba8-cd321011b61b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Intro\Intro\Intro\glad.c">
@@ -59,5 +62,13 @@
     <ClInclude Include="Shaders\Interface\IShaderLoader.h">
       <Filter>头文件\Interface</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\shader.fs">
+      <Filter>源文件\Shaders</Filter>
+    </None>
+    <None Include="Shaders\shader.vs">
+      <Filter>源文件\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
