@@ -2,6 +2,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Shaders/Impl/Shader.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -32,11 +36,12 @@ int main() {
 	
 	//检测GLAD初始化
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		std::cout << "GLAD初始化失败" << std::endl;
+		std::cout << "GLAD初始化失败" << '\n';
 		return -1;
 	}
 
-	Shader testShader("../Shaders/shader.vs", "../Shaders/shader.vs");
+	Shader testShader(R"(D:\Projects\TA\OpenGLProjects\reThink\reThink\Shaders\shader.vs)",
+	                  R"(D:\Projects\TA\OpenGLProjects\reThink\reThink\Shaders\shader.fs)");
 
 	float vertices[] = {
 		// 位置         // 颜色
@@ -63,7 +68,8 @@ int main() {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	
+	glm::mat4 mat = glm::mat4(1.0f);
+
 	//主循环
 	while (!glfwWindowShouldClose(window)) {
 
@@ -79,6 +85,10 @@ int main() {
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	
 	glfwTerminate();
 	return 0;
 
@@ -89,6 +99,9 @@ int main() {
 void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window,GLFW_KEY_ESCAPE) == GLFW_PRESS){
 		glfwSetWindowShouldClose(window, true);
+	}
+	if (glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS){
+		
 	}
 }
 
