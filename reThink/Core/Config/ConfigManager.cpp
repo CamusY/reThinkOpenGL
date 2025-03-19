@@ -3,75 +3,87 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-#include <set>
 
-using namespace nlohmann;
+using namespace std;
 
-ConfigManager::ConfigManager(const std::string& layoutPath, const std::string& keymapPath)
-    : layoutPath_(layoutPath), keymapPath_(keymapPath) {
+void ConfigManager::SetLayoutConfigValue(const std::string& section, const std::string& key, const std::string& value) {
+    layout_config_[section][key] = value;
+}
+
+void ConfigManager::LoadLayoutConfig(const fs::path& path) {
+    layout_config_.clear();
+    string content = LoadFileContent(path);
+    ParseLayoutConfig(content);
+}
+
+void ConfigManager::LoadConfig() {
     try {
-        LoadLayoutConfig();
-        LoadKeymapConfig();
-    } catch (const std::exception& e) {
-        throw std::runtime_error("配置初始化失败: " + std::string(e.what()));
+        // 加载布局配置
+        string layoutContent = LoadFileContent(LAYOUT_PATH);
+        ParseLayoutConfig(layoutContent);
+
+        // 加载快捷键配置
+        string keymapContent = LoadFileContent(KEYMAP_PATH);
+        ParseKeymapConfig(keymapContent);
+    } catch (const exception& e) {
+        throw runtime_error("配置加载失败: " + string(e.what()));
     }
 }
 
-bool ConfigManager::Reload() {
-    try {
-        LoadLayoutConfig();
-        LoadKeymapConfig();
-        return true;
-    } catch (...) {
-        return false;
+string ConfigManager::LoadFileContent(const fs::path& path) {
+    // 检查文件是否存在
+    if (!fs::exists(path)) {
+        throw runtime_error("配置文件不存在: " + path.string());
     }
-}
 
-void ConfigManager::LoadLayoutConfig() {
-    std::ifstream file(layoutPath_);
+    // 读取文件内容
+    ifstream file(path);
     if (!file.is_open()) {
-        throw std::runtime_error("无法打开布局文件: " + layoutPath_);
+        throw runtime_error("无法打开文件: " + path.string());
     }
-    
-    std::stringstream buffer;
+
+    stringstream buffer;
     buffer << file.rdbuf();
-    layoutConfig_ = buffer.str();
-    
-    // 基础格式验证
-    if (layoutConfig_.find("[Window]") == std::string::npos) {
-        throw std::runtime_error("无效的布局文件格式");
-    }
+    return buffer.str();
 }
 
-void ConfigManager::LoadKeymapConfig() {
-    std::ifstream file(keymapPath_);
-    if (!file.is_open()) {
-        throw std::runtime_error("无法打开快捷键文件: " + keymapPath_);
-    }
-
-    json j;
-    try {
-        file >> j;
-        ValidateKeymap(j);
-    } catch (const json::exception& e) {
-        throw std::runtime_error("JSON解析错误: " + std::string(e.what()));
-    }
-
-    keyMap_.clear();
-    for (auto& [key, value] : j.items()) {
-        keyMap_[key] = value.get<std::string>();
-    }
-}
-
-void ConfigManager::ValidateKeymap(const json& j) {
-    if (!j.is_object()) {
-        throw std::runtime_error("快捷键配置必须为JSON对象");
-    }
+void ConfigManager::ParseLayoutConfig(const string& content) {
+    layout_config_.clear();
+    string current_section;
     
-    const std::set<std::string> requiredKeys = {"save", "load", "compile"};
-    for (const auto& key : requiredKeys) {
-        if (!j.contains(key)) {
-            throw std::runtime_error("缺少必需快捷键: " + key);
+    istringstream iss(content);
+    string line;
+    
+    while (getline(iss, line)) {
+        // 去除前后空白和注释
+        line = line.substr(0, line.find_first_of(";#"));
+        line.erase(0, line.find_first_not_of(" \t"));
+        line.erase(line.find_last_not_of(" \t") + 1);
+
+        if (line.empty()) continue;
+
+        // 处理节头
+        if (line.front() == '[' && line.back() == ']') {
+            current_section = line.substr(1, line.size() - 2);
+            layout_config_[current_section];
+            continue;
         }
+
+        // 处理键值对
+        size_t delimiter = line.find('=');
+        if (delimiter != string::npos && !current_section.empty()) {
+            string key = line.substr(0, line.find_last_not_of(" \t", delimiter - 1) + 1);
+            string value = line.substr(delimiter + 1);
+            value.erase(0, value.find_first_not_of(" \t"));
+            layout_config_[current_section][key] = value;
+        }
+    }
+}
+
+void ConfigManager::ParseKeymapConfig(const string& content) {
+    try {
+        keymap_config_ = nlohmann::json::parse(content);
+    } catch (const nlohmann::json::exception& e) {
+        throw runtime_error("JSON解析错误: " + string(e.what()));
     }
 }

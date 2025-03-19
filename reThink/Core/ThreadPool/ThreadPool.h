@@ -7,6 +7,7 @@
 #include <condition_variable>
 #include <functional>
 #include <atomic>
+#include <future>
 
 /**
  * @brief 线程安全的任务线程池
@@ -41,13 +42,21 @@ public:
      * @param task 要执行的任务
      */
     template<typename F>
-    void Enqueue(F&& task) {
+    auto Enqueue(F&& task) -> std::future<decltype(task())> {
+        using return_type = decltype(task());
+    
+        auto task_ptr = std::make_shared<std::packaged_task<return_type()>>(
+            std::forward<F>(task)
+        );
+    
+        std::future<return_type> res = task_ptr->get_future();
         {
             std::unique_lock<std::mutex> lock(queueMutex_);
             if(stop_) throw std::runtime_error("线程池已停止");
-            tasks_.emplace(std::forward<F>(task));
+            tasks_.emplace([task_ptr](){ (*task_ptr)(); });
         }
         condition_.notify_one();
+        return res;
     }
 
     /**

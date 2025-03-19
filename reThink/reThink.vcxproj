@@ -138,6 +138,8 @@
     <ClCompile Include="..\..\Intro\Intro\Intro\glad.c" />
     <ClCompile Include="Core\Config\ConfigManager.cpp" />
     <ClCompile Include="Core\EventBus\EventBus_test.cpp" />
+    <ClCompile Include="Core\Utils\JSONSerializer.cpp" />
+    <ClCompile Include="Core\Utils\MathUtils.cpp" />
     <ClCompile Include="includes\imgui-docking\imgui.cpp" />
     <ClCompile Include="includes\imgui-docking\ImGuiFileDialog.cpp" />
     <ClCompile Include="includes\imgui-docking\imgui_demo.cpp" />
@@ -226,9 +228,13 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Modules\ControlPanel\ControlPanel.cpp" />
     <ClCompile Include="Modules\MenuBar\MenuBar.cpp" />
+    <ClCompile Include="Modules\ProjectManager\ProjectManager.cpp" />
     <ClCompile Include="Modules\SceneViewport\SceneViewport.cpp" />
     <ClCompile Include="Modules\ShaderEditor\ShaderEditor.cpp" />
     <ClCompile Include="Modules\Window\Window.cpp" />
+    <ClCompile Include="Resources\Material\Material.cpp" />
+    <ClCompile Include="Resources\ModelLoader\ModelLoader.cpp" />
+    <ClCompile Include="Resources\ShaderManager\ShaderManager.cpp" />
     <ClCompile Include="Tools\Editor\Editor.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -305,7 +311,6 @@
       <AdditionalIncludeDirectories>;C:\Code\Vcpkg\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Tools\Model\Model.cpp" />
-    <ClCompile Include="Tools\ProjectManager\ProjectManager.cpp" />
     <ClCompile Include="Tools\ShaderTools\CheckShaderCompileErrors.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -539,6 +544,8 @@
     <ClInclude Include="Core\EventBus\EventBus.h" />
     <ClInclude Include="Core\EventBus\EventTypes.h" />
     <ClInclude Include="Core\ThreadPool\ThreadPool.h" />
+    <ClInclude Include="Core\Utils\JSONSerializer.h" />
+    <ClInclude Include="Core\Utils\MathUtils.h" />
     <ClInclude Include="includes\imgui-docking\imconfig.h" />
     <ClInclude Include="includes\imgui-docking\imgui.h" />
     <ClInclude Include="includes\imgui-docking\ImGuiFileDialog.h" />
@@ -556,12 +563,15 @@
     <ClInclude Include="includes\imgui-docking\TextEditor.h" />
     <ClInclude Include="Modules\ControlPanel\ControlPanel.h" />
     <ClInclude Include="Modules\MenuBar\MenuBar.h" />
+    <ClInclude Include="Modules\ProjectManager\ProjectManager.h" />
     <ClInclude Include="Modules\SceneViewport\SceneViewport.h" />
     <ClInclude Include="Modules\ShaderEditor\ShaderEditor.h" />
     <ClInclude Include="Modules\Window\Window.h" />
+    <ClInclude Include="Resources\Material\Material.h" />
+    <ClInclude Include="Resources\ModelLoader\ModelLoader.h" />
+    <ClInclude Include="Resources\ShaderManager\ShaderManager.h" />
     <ClInclude Include="Tools\Editor\Editor.h" />
     <ClInclude Include="Tools\Model\Model.h" />
-    <ClInclude Include="Tools\ProjectManager\ProjectManager.h" />
     <ClInclude Include="Tools\ShaderTools\CheckShaderCompileErrors.h" />
     <ClInclude Include="Tools\ShaderTools\Shader.h" />
     <ClInclude Include="Tools\ShaderTools\ShaderLoader.h" />
@@ -572,6 +582,8 @@
     <None Include="Shaders\shader.vs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Core\Config\keymap_config.json" />
+    <Content Include="Core\Config\layout_config.ini" />
     <Content Include="includes\imgui-docking\.editorconfig" />
     <Content Include="includes\imgui-docking\.gitattributes" />
     <Content Include="includes\imgui-docking\.github\FUNDING.yml" />
@@ -612,13 +624,9 @@
     <Natvis Include="includes\imgui-docking\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\Utils\" />
     <Folder Include="Modules\InputHandler\" />
     <Folder Include="Modules\ProjectTree\" />
     <Folder Include="Procedural\" />
-    <Folder Include="Resources\Material\" />
-    <Folder Include="Resources\ModelLoader\" />
-    <Folder Include="Resources\ShaderManager\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

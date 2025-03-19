@@ -1,0 +1,19 @@
+﻿
+{
+  "Core": {
+    "SaveProject": "Ctrl+S",
+    "OpenProject": "Ctrl+O",
+    "NewProject": "Ctrl+N"
+  },
+  "Editor": {
+    "Translate": "G",
+    "Rotate": "R",
+    "Scale": "S",
+    "ToggleEditMode": "Tab"
+  },
+  "Viewport": {
+    "PerspectiveView": "1",
+    "OrthographicView": "2",
+    "ToggleFullscreen": "F11"
+  }
+}

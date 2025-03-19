@@ -1,44 +1,49 @@
 ﻿// ConfigManager.h
 #pragma once
 #include <string>
-#include <memory>
 #include <unordered_map>
 #include <nlohmann/json.hpp>
-#include "./imgui-docking/imgui.h"
+#include <filesystem>
 
-/**
- * @brief 配置文件管理模块
- * @note 使用依赖注入设计，不采用单例模式
- */
+namespace fs = std::filesystem;
+
 class ConfigManager {
 public:
-    /**
-     * @brief 构造函数加载配置文件
-     * @param layoutPath 布局配置文件路径
-     * @param keymapPath 快捷键配置文件路径
-     * @throws std::runtime_error 文件加载失败或格式错误
-     */
-    ConfigManager(const std::string& layoutPath, const std::string& keymapPath);
-    
-    /**
-     * @brief 重新加载所有配置文件
-     * @return 是否成功重新加载
-     */
-    bool Reload();
+    // 配置数据结构定义
+    using LayoutConfig = std::unordered_map<std::string, std::unordered_map<std::string, std::string>>;
+    using KeymapConfig = nlohmann::json;
+    void SetLayoutConfigValue(const std::string& section, const std::string& key, const std::string& value);
+    void LoadLayoutConfig(const fs::path& path);
 
-    // 布局配置访问接口
-    const std::string& GetLayoutConfig() const { return layoutConfig_; }
-    
-    // 快捷键配置访问接口
-    const std::unordered_map<std::string, std::string>& GetKeyMap() const { return keyMap_; }
+    /**
+     * @brief 加载所有配置文件
+     * @throws std::runtime_error 配置文件加载或解析失败时抛出
+     */
+    void LoadConfig();
+
+    /**
+     * @brief 获取布局配置数据
+     * @return 包含所有布局配置的嵌套字典
+     */
+    const LayoutConfig& GetLayoutConfig() const noexcept { return layout_config_; }
+
+    /**
+     * @brief 获取快捷键配置数据
+     * @return 包含快捷键映射的JSON对象
+     */
+    const KeymapConfig& GetKeymapConfig() const noexcept { return keymap_config_; }
 
 private:
-    std::string layoutPath_;
-    std::string keymapPath_;
-    std::string layoutConfig_;  // 原始INI配置内容
-    std::unordered_map<std::string, std::string> keyMap_;  // 快捷键映射
+    // 配置文件路径
+    static const inline fs::path LAYOUT_PATH = "config/layout_config.ini";
+    static const inline fs::path KEYMAP_PATH = "config/keymap_config.json";
 
-    void LoadLayoutConfig();
-    void LoadKeymapConfig();
-    void ValidateKeymap(const nlohmann::json& j);
+    // 配置数据存储
+    LayoutConfig layout_config_;
+    KeymapConfig keymap_config_;
+
+    // 内部解析方法
+    void ParseLayoutConfig(const std::string& content);
+    void ParseKeymapConfig(const std::string& content);
+    std::string LoadFileContent(const fs::path& path);
 };
