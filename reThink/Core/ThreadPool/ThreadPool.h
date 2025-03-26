@@ -1,112 +1,74 @@
 ﻿// ThreadPool.h
-#pragma once
+#ifndef THREADPOOL_H
+#define THREADPOOL_H
+
+#include <functional>
+#include <queue>
 #include <vector>
 #include <thread>
-#include <queue>
 #include <mutex>
 #include <condition_variable>
-#include <functional>
 #include <atomic>
-#include <future>
+#include <stdexcept>
 
-/**
- * @brief 线程安全的任务线程池
- * @note 通过依赖注入传递到需要使用的模块
- */
+// ThreadPool 模块，提供异步任务执行服务
 class ThreadPool {
 public:
-    /**
-     * @brief 构造函数注入必要配置
-     * @param threadCount 线程数量（默认硬件并发数）
-     * @param onError 错误处理回调（可选）
-     */
-    explicit ThreadPool(
-        unsigned int threadCount = std::thread::hardware_concurrency(),
-        std::function<void(const std::exception&)> onError = nullptr
-    ) : stop_(false), errorHandler_(onError) {
-        // 防御性检查
-        if(threadCount == 0) throw std::invalid_argument("线程数不能为零");
-        
-        for(unsigned int i = 0; i < threadCount; ++i) {
-            workers_.emplace_back([this] { workerLoop(); });
-        }
-    }
-
-    ~ThreadPool() {
-        stop();
-    }
-
-    /**
-     * @brief 提交任务到线程池
-     * @tparam F 可调用对象类型
-     * @param task 要执行的任务
-     */
-    template<typename F>
-    auto Enqueue(F&& task) -> std::future<decltype(task())> {
-        using return_type = decltype(task());
+    // 构造函数，初始化线程池，参数为线程数，默认为硬件并发线程数
+    explicit ThreadPool(size_t threadCount = std::thread::hardware_concurrency());
     
-        auto task_ptr = std::make_shared<std::packaged_task<return_type()>>(
-            std::forward<F>(task)
-        );
-    
-        std::future<return_type> res = task_ptr->get_future();
-        {
-            std::unique_lock<std::mutex> lock(queueMutex_);
-            if(stop_) throw std::runtime_error("线程池已停止");
-            tasks_.emplace([task_ptr](){ (*task_ptr)(); });
-        }
-        condition_.notify_one();
-        return res;
-    }
+    // 析构函数，停止线程池并清理资源
+    ~ThreadPool();
 
-    /**
-     * @brief 停止线程池（等待所有任务完成）
-     */
-    void stop() noexcept {
-        {
-            std::unique_lock<std::mutex> lock(queueMutex_);
-            if(stop_) return;
-            stop_ = true;
-        }
-        condition_.notify_all();
-        for(std::thread& worker : workers_) {
-            if(worker.joinable()) worker.join();
-        }
-    }
+    // 将任务加入队列，支持优先级，默认优先级为 0（最低）
+    void EnqueueTask(std::function<void()> task, int priority = 0);
+
+    // 等待所有任务完成
+    void WaitAll();
+
+    // 设置错误回调函数，用于任务执行失败时通知调用方
+    void SetErrorCallback(std::function<void(const std::string&)> callback);
+
+    // 获取当前任务队列中的任务数（仅用于调试或状态检查）
+    size_t GetPendingTaskCount() const;
 
 private:
-    std::vector<std::thread> workers_;
-    std::queue<std::function<void()>> tasks_;
-    std::mutex queueMutex_;
-    std::condition_variable condition_;
-    std::atomic<bool> stop_;
-    std::function<void(const std::exception&)> errorHandler_;
+    // 任务结构体，包含任务函数和优先级
+    struct Task {
+        std::function<void()> taskFunction;
+        int priority;
 
-    void workerLoop() {
-        while(true) {
-            std::function<void()> task;
-            {
-                std::unique_lock<std::mutex> lock(queueMutex_);
-                condition_.wait(lock, [this] {
-                    return stop_ || !tasks_.empty();
-                });
+        Task(std::function<void()> func, int prio) : taskFunction(std::move(func)), priority(prio) {}
 
-                if(stop_ && tasks_.empty()) return;
-
-                task = std::move(tasks_.front());
-                tasks_.pop();
-            }
-
-            try {
-                task();
-            } catch(const std::exception& e) {
-                if(errorHandler_) {
-                    errorHandler_(e);
-                } else {
-                    // 默认错误处理
-                    fprintf(stderr, "线程池任务异常: %s\n", e.what());
-                }
-            }
+        // 用于优先级队列比较，高优先级任务先执行
+        bool operator<(const Task& other) const {
+            return priority < other.priority;
         }
-    }
+    };
+
+    // 工作线程函数
+    void WorkerThread();
+
+    // 线程池中的线程集合
+    std::vector<std::thread> workers;
+
+    // 任务队列，使用优先级队列管理
+    std::priority_queue<Task> tasks;
+
+    // 互斥锁，保护任务队列
+    mutable std::mutex queueMutex;
+
+    // 条件变量，用于线程同步
+    std::condition_variable condition;
+
+    // 停止标志，控制线程池退出
+    std::atomic<bool> stop;
+
+    // 当前正在执行的任务数
+    std::atomic<size_t> activeTasks;
+
+    // 错误回调函数
+    std::function<void(const std::string&)> errorCallback;
 };
+
+#endif // THREADPOOL_H

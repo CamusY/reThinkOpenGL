@@ -1,19 +1,10 @@
-﻿
-{
-  "Core": {
-    "SaveProject": "Ctrl+S",
-    "OpenProject": "Ctrl+O",
-    "NewProject": "Ctrl+N"
-  },
-  "Editor": {
-    "Translate": "G",
-    "Rotate": "R",
-    "Scale": "S",
-    "ToggleEditMode": "Tab"
-  },
-  "Viewport": {
-    "PerspectiveView": "1",
-    "OrthographicView": "2",
-    "ToggleFullscreen": "F11"
+﻿{
+  "shortcuts": {
+    "toggle_edit_mode": "Tab",
+    "translate_tool": "G",
+    "rotate_tool": "R",
+    "scale_tool": "S",
+    "undo": "Ctrl+Z",
+    "focus_object": "F"
   }
 }

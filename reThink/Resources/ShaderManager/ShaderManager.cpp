@@ -23,6 +23,8 @@ bool ShaderManager::LoadShaderFromFile(const std::string& vertexPath,
     // 初始化元数据
     ShaderMetadata meta;
     try {
+        meta.vertexPath = vertexPath;   // 新增
+        meta.fragmentPath = fragmentPath; // 新增
         meta.lastVertexWrite = fs::last_write_time(vertexPath);
         meta.lastFragmentWrite = fs::last_write_time(fragmentPath);
     } catch (const fs::filesystem_error&) {
@@ -93,6 +95,8 @@ void ShaderManager::CheckForHotReload() {
         }
     }
 }
+
+
 
 // 实现其他私有方法...
 void ShaderManager::AsyncCompileTask(const std::string& vertexPath,

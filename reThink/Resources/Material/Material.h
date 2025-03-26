@@ -6,6 +6,7 @@
 #include <string>
 #include <stdexcept>
 #include "ShaderManager/ShaderManager.h"
+#include "TextureManager/TextureManager.h"
 
 /**
  * @brief 材质类，负责管理材质属性并与着色器进行绑定
@@ -18,24 +19,35 @@ public:
      * @param shaderManager ShaderManager 智能指针（必须非空）
      * @throws std::invalid_argument 参数为空时抛出
      */
-    explicit Material(std::shared_ptr<ShaderManager> shaderManager);
-
+    Material(std::shared_ptr<ShaderManager> shaderManager,
+             std::shared_ptr<TextureManager> textureManager);
+        
     //------------------- 材质属性设置接口 -------------------//
     void SetDiffuseColor(const glm::vec3& color);
     void SetSpecularColor(const glm::vec3& color);
-    void SetDiffuseTexture(GLuint textureID);
-    void SetNormalTexture(GLuint textureID);
+    void SetDiffuseTexture(const std::string& texturePath) {
+        diffuseTexture_ = textureManager_->LoadTexture(texturePath);
+    }
+
+    void SetNormalTexture(const std::string& texturePath) {
+        normalTexture_ = textureManager_->LoadTexture(texturePath);
+    }
     void SetRoughness(float roughness);
     void SetMetallic(float metallic);
 
     //------------------- 材质属性获取接口 -------------------//
     glm::vec3 GetDiffuseColor() const;
     glm::vec3 GetSpecularColor() const;
-    GLuint GetDiffuseTexture() const;
-    GLuint GetNormalTexture() const;
     float GetRoughness() const;
     float GetMetallic() const;
 
+    GLuint GetDiffuseTexture() const {
+        return diffuseTexture_ ? diffuseTexture_->id : 0;
+    }
+
+    GLuint GetNormalTexture() const {
+        return normalTexture_ ? normalTexture_->id : 0;
+    }
     /**
      * @brief 绑定材质到指定着色器
      * @param vertexShaderPath 顶点着色器路径
@@ -44,8 +56,17 @@ public:
      */
     void Bind(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
 
+    /**
+     * @brief 设置着色器Uniform值
+     * @param programID 目标着色器程序ID
+     */
+    void ApplyUniforms(GLuint programID) const;
+
 private:
     std::shared_ptr<ShaderManager> shaderManager_;
+    std::shared_ptr<TextureManager> textureManager_;
+    std::shared_ptr<Texture> diffuseTexture_;
+    std::shared_ptr<Texture> normalTexture_;
 
     // 材质属性
     glm::vec3 diffuseColor_ = glm::vec3(1.0f); // 默认漫反射颜色为白色
@@ -55,9 +76,5 @@ private:
     float roughness_ = 0.5f;                    // 粗糙度（0-1）
     float metallic_ = 0.0f;                     // 金属度（0-1）
 
-    /**
-     * @brief 设置着色器Uniform值
-     * @param programID 目标着色器程序ID
-     */
-    void ApplyUniforms(GLuint programID) const;
+    
 };

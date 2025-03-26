@@ -8,30 +8,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="118df79a-4582-401f-85b3-b28df664827a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/reThink/Core/Config/keymap_config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Core/Config/layout_config.ini" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Core/Utils/JSONSerializer.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Core/Utils/JSONSerializer.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Core/Utils/MathUtils.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Core/Utils/MathUtils.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Modules/ProjectManager/ProjectManager.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Resources/Material/Material.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Resources/Material/Material.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Resources/ModelLoader/ModelLoader.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Resources/ModelLoader/ModelLoader.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Resources/ShaderManager/ShaderManager.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reThink/Resources/ShaderManager/ShaderManager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Core/ThreadPool/ThreadPool.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Modules/Animation/Animation.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Modules/Animation/Animation.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Modules/InputHandler/InputHandler.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Modules/InputHandler/InputHandler.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Modules/ProjectTree/ProjectTree.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Modules/ProjectTree/ProjectTree.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Resources/AnimationManager/AnimationManager.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Resources/AnimationManager/AnimationManager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Resources/TextureManager/Texture.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Resources/TextureManager/Texture.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Resources/TextureManager/TextureManager.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reThink/Resources/TextureManager/TextureManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.reThink/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.reThink/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reThink/Core/Config/ConfigManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Core/Config/ConfigManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reThink/Core/Config/ConfigManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Core/Config/ConfigManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Core/Config/keymap_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Core/Config/keymap_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Core/Config/layout_config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Core/Config/layout_config.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Core/EventBus/EventBus.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Core/EventBus/EventBus.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Core/EventBus/EventBus_test.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/reThink/Core/EventBus/EventTypes.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Core/EventBus/EventTypes.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reThink/Core/ThreadPool/ThreadPool.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Core/ThreadPool/ThreadPool.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Modules/ControlPanel/ControlPanel.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Modules/ControlPanel/ControlPanel.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/reThink/Modules/MenuBar/MenuBar.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Modules/MenuBar/MenuBar.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reThink/Modules/MenuBar/MenuBar.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Modules/MenuBar/MenuBar.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Modules/SceneViewport/SceneViewport.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Modules/SceneViewport/SceneViewport.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Modules/SceneViewport/SceneViewport.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Modules/SceneViewport/SceneViewport.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Modules/ShaderEditor/ShaderEditor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Modules/ShaderEditor/ShaderEditor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Modules/ShaderEditor/ShaderEditor.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Modules/ShaderEditor/ShaderEditor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reThink/Modules/Window/Window.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Modules/Window/Window.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reThink/Modules/Window/Window.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Modules/Window/Window.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reThink/Tools/ProjectManager/ProjectManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Modules/ProjectManager/ProjectManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reThink/Tools/ProjectManager/ProjectManager.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Resources/Material/Material.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Resources/Material/Material.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Resources/Material/Material.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Resources/Material/Material.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Resources/ModelLoader/ModelLoader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Resources/ModelLoader/ModelLoader.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Resources/ModelLoader/ModelLoader.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Resources/ModelLoader/ModelLoader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Resources/ShaderManager/ShaderManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Resources/ShaderManager/ShaderManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reThink/Resources/ShaderManager/ShaderManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/Resources/ShaderManager/ShaderManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reThink/reThink.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/reThink/reThink.vcxproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -64,6 +78,7 @@
     <setting file="file://C:/MinGW/x86_64-w64-mingw32/include/dirent.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/um/fileapi.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.42.34433/include/filesystem" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.42.34433/include/memory" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.42.34433/include/string" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/reThink/includes/GLFW/glfw3.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/reThink/includes/ImGuiFileDialog/ImGuiFileDialog.h" root0="SKIP_HIGHLIGHTING" />
@@ -71,6 +86,7 @@
     <setting file="file://$PROJECT_DIR$/reThink/includes/assimp/defs.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/reThink/includes/imgui-docking/imgui.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/reThink/includes/imgui-docking/misc/fonts/binary_to_compressed_c.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/reThink/includes/inih/INIReader.h" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
@@ -87,22 +103,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C++ 项目.reThink.executor": "Run",
-    "C/C++ 项目.reThink.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.inline.completion",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C++ 项目.reThink.executor&quot;: &quot;Run&quot;,
+    &quot;C/C++ 项目.reThink.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="reThink" type="CppProject" factoryName="C++ Project">
       <configuration_1 setup="1">
@@ -203,7 +219,13 @@
       <workItem from="1742295272960" duration="11703000" />
       <workItem from="1742313763018" duration="160000" />
       <workItem from="1742313957565" duration="1286000" />
-      <workItem from="1742368478520" duration="16661000" />
+      <workItem from="1742368478520" duration="19410000" />
+      <workItem from="1742399515595" duration="10139000" />
+      <workItem from="1742450320667" duration="19261000" />
+      <workItem from="1742542803887" duration="1207000" />
+      <workItem from="1742549059679" duration="4687000" />
+      <workItem from="1742909704549" duration="6751000" />
+      <workItem from="1742956176170" duration="3185000" />
     </task>
     <task id="LOCAL-00001" summary="暂时使用绝对路径代替了相对路径">
       <option name="closed" value="true" />
@@ -229,7 +251,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742181049001</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="又是一次更新">
+      <option name="closed" value="true" />
+      <created>1742393763186</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742393763186</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -242,7 +272,8 @@
     <MESSAGE value="暂时使用绝对路径代替了相对路径" />
     <MESSAGE value="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;reThink/Window.cpp" />
     <MESSAGE value="进行了一些修改和重构" />
-    <option name="LAST_COMMIT_MESSAGE" value="进行了一些修改和重构" />
+    <MESSAGE value="又是一次更新" />
+    <option name="LAST_COMMIT_MESSAGE" value="又是一次更新" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

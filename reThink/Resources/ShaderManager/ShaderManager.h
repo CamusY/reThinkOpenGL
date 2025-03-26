@@ -19,12 +19,15 @@ namespace fs = std::filesystem;
  */
 struct ShaderMetadata {
     GLuint programId = 0;                // OpenGL着色器程序ID
+    std::string vertexPath;
+    std::string fragmentPath;
     fs::file_time_type lastVertexWrite;  // 顶点着色器最后修改时间
     fs::file_time_type lastFragmentWrite;// 片段着色器最后修改时间
     bool isCompiling = false;            // 是否正在编译中
     bool success = false;                // 编译是否成功
     std::string lastError;               // 最后一次编译错误信息
 };
+
 
 /**
  * @brief 着色器资源管理器，负责加载、编译、热重载和生命周期管理
@@ -43,6 +46,7 @@ public:
     // 禁止拷贝和移动
     ShaderManager(const ShaderManager&) = delete;
     ShaderManager& operator=(const ShaderManager&) = delete;
+    
     ~ShaderManager() = default;
 
     /**
@@ -75,6 +79,11 @@ public:
      * @brief 检查文件修改并触发热重载（应在主线程定期调用）
      */
     void CheckForHotReload();
+    
+   // ShaderMetadata GetDefaultShader() const;
+
+    std::mutex& GetMutex() { return shadersMutex_; }
+    const std::unordered_map<std::string, ShaderMetadata>& GetAllShaders() const { return shaders_; }
 
 
 private:

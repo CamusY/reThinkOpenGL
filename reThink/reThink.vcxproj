@@ -137,7 +137,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\Intro\Intro\Intro\glad.c" />
     <ClCompile Include="Core\Config\ConfigManager.cpp" />
-    <ClCompile Include="Core\EventBus\EventBus_test.cpp" />
     <ClCompile Include="Core\Utils\JSONSerializer.cpp" />
     <ClCompile Include="Core\Utils\MathUtils.cpp" />
     <ClCompile Include="includes\imgui-docking\imgui.cpp" />
@@ -226,15 +225,20 @@
     </ClCompile>
     <ClCompile Include="includes\imgui-docking\TextEditor.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Modules\ControlPanel\ControlPanel.cpp" />
+    <ClCompile Include="Modules\Animation\Animation.cpp" />
+    <ClCompile Include="Modules\InputHandler\InputHandler.cpp" />
     <ClCompile Include="Modules\MenuBar\MenuBar.cpp" />
     <ClCompile Include="Modules\ProjectManager\ProjectManager.cpp" />
+    <ClCompile Include="Modules\ProjectTree\ProjectTree.cpp" />
     <ClCompile Include="Modules\SceneViewport\SceneViewport.cpp" />
     <ClCompile Include="Modules\ShaderEditor\ShaderEditor.cpp" />
     <ClCompile Include="Modules\Window\Window.cpp" />
+    <ClCompile Include="Resources\AnimationManager\AnimationManager.cpp" />
     <ClCompile Include="Resources\Material\Material.cpp" />
     <ClCompile Include="Resources\ModelLoader\ModelLoader.cpp" />
     <ClCompile Include="Resources\ShaderManager\ShaderManager.cpp" />
+    <ClCompile Include="Resources\TextureManager\Texture.cpp" />
+    <ClCompile Include="Resources\TextureManager\TextureManager.cpp" />
     <ClCompile Include="Tools\Editor\Editor.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -543,6 +547,7 @@
     <ClInclude Include="Core\Config\ConfigManager.h" />
     <ClInclude Include="Core\EventBus\EventBus.h" />
     <ClInclude Include="Core\EventBus\EventTypes.h" />
+    <ClInclude Include="Core\ThreadPool\ThreadPool.cpp" />
     <ClInclude Include="Core\ThreadPool\ThreadPool.h" />
     <ClInclude Include="Core\Utils\JSONSerializer.h" />
     <ClInclude Include="Core\Utils\MathUtils.h" />
@@ -561,15 +566,20 @@
     <ClInclude Include="includes\imgui-docking\misc\freetype\imgui_freetype.h" />
     <ClInclude Include="includes\imgui-docking\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="includes\imgui-docking\TextEditor.h" />
-    <ClInclude Include="Modules\ControlPanel\ControlPanel.h" />
+    <ClInclude Include="Modules\Animation\Animation.h" />
+    <ClInclude Include="Modules\InputHandler\InputHandler.h" />
     <ClInclude Include="Modules\MenuBar\MenuBar.h" />
     <ClInclude Include="Modules\ProjectManager\ProjectManager.h" />
+    <ClInclude Include="Modules\ProjectTree\ProjectTree.h" />
     <ClInclude Include="Modules\SceneViewport\SceneViewport.h" />
     <ClInclude Include="Modules\ShaderEditor\ShaderEditor.h" />
     <ClInclude Include="Modules\Window\Window.h" />
+    <ClInclude Include="Resources\AnimationManager\AnimationManager.h" />
     <ClInclude Include="Resources\Material\Material.h" />
     <ClInclude Include="Resources\ModelLoader\ModelLoader.h" />
     <ClInclude Include="Resources\ShaderManager\ShaderManager.h" />
+    <ClInclude Include="Resources\TextureManager\Texture.h" />
+    <ClInclude Include="Resources\TextureManager\TextureManager.h" />
     <ClInclude Include="Tools\Editor\Editor.h" />
     <ClInclude Include="Tools\Model\Model.h" />
     <ClInclude Include="Tools\ShaderTools\CheckShaderCompileErrors.h" />
@@ -624,8 +634,7 @@
     <Natvis Include="includes\imgui-docking\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Modules\InputHandler\" />
-    <Folder Include="Modules\ProjectTree\" />
+    <Folder Include="Modules\ControlPanel\" />
     <Folder Include="Procedural\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,10 +2,13 @@
 #include "Material.h"
 #include <glad/glad.h>
 
-Material::Material(std::shared_ptr<ShaderManager> shaderManager)
-    : shaderManager_(shaderManager) {
-    if (!shaderManager_) {
-        throw std::invalid_argument("Material: ShaderManager 不存在");
+Material::Material(std::shared_ptr<ShaderManager> shaderManager,
+             std::shared_ptr<TextureManager> textureManager)
+        : shaderManager_(shaderManager),
+          textureManager_(textureManager) 
+{
+    if (!shaderManager_ || !textureManager_) {
+        throw std::invalid_argument("依赖项不能为空");
     }
 }
 
@@ -18,13 +21,6 @@ void Material::SetSpecularColor(const glm::vec3& color) {
     specularColor_ = color;
 }
 
-void Material::SetDiffuseTexture(GLuint textureID) {
-    diffuseTextureID_ = textureID;
-}
-
-void Material::SetNormalTexture(GLuint textureID) {
-    normalTextureID_ = textureID;
-}
 
 void Material::SetRoughness(float roughness) {
     roughness_ = roughness < 0.0f ? 0.0f : (roughness > 1.0f ? 1.0f : roughness);
@@ -43,13 +39,6 @@ glm::vec3 Material::GetSpecularColor() const {
     return specularColor_;
 }
 
-GLuint Material::GetDiffuseTexture() const {
-    return diffuseTextureID_;
-}
-
-GLuint Material::GetNormalTexture() const {
-    return normalTextureID_;
-}
 
 float Material::GetRoughness() const {
     return roughness_;
@@ -74,6 +63,22 @@ void Material::Bind(const std::string& vertexShaderPath, const std::string& frag
 
 void Material::ApplyUniforms(GLuint programID) const {
     glUseProgram(programID);
+
+    // 设置漫反射纹理
+    if (diffuseTexture_) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, diffuseTexture_->id);
+        GLint loc = glGetUniformLocation(programID, "u_DiffuseTexture");
+        if (loc != -1) glUniform1i(loc, 0);
+    }
+
+    // 设置法线纹理
+    if (normalTexture_) {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, normalTexture_->id);
+        GLint loc = glGetUniformLocation(programID, "u_NormalTexture");
+        if (loc != -1) glUniform1i(loc, 1);
+    }
 
     // 设置颜色Uniform
     GLint loc = glGetUniformLocation(programID, "u_DiffuseColor");
