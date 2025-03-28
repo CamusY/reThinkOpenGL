@@ -1,111 +1,64 @@
-﻿// Material.cpp
-#include "Material.h"
+﻿#include "Material.h"
+#include "MaterialManager/MaterialManager.h" // 假设 MaterialManager 的头文件
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
-Material::Material(std::shared_ptr<ShaderManager> shaderManager,
-             std::shared_ptr<TextureManager> textureManager)
-        : shaderManager_(shaderManager),
-          textureManager_(textureManager) 
-{
-    if (!shaderManager_ || !textureManager_) {
-        throw std::invalid_argument("依赖项不能为空");
-    }
+using namespace MyRenderer::Events;
+
+Material::Material(std::shared_ptr<EventBus> eventBus, std::shared_ptr<MaterialManager> materialManager, const std::string& uuid)
+    : eventBus_(eventBus), materialManager_(materialManager), uuid_(uuid) {
+    if (!eventBus_) throw std::invalid_argument("Material: EventBus cannot be null");
+    if (!materialManager_) throw std::invalid_argument("Material: MaterialManager cannot be null");
+    if (uuid_.empty()) throw std::invalid_argument("Material: UUID cannot be empty");
+    SubscribeToEvents();
+    eventBus_->Publish(MaterialUpdatedEvent{uuid_, diffuseColor_, specularColor_, shininess_, textureUUID_});
 }
 
-//------------------- 属性设置方法实现 -------------------//
 void Material::SetDiffuseColor(const glm::vec3& color) {
     diffuseColor_ = color;
+    eventBus_->Publish(MaterialUpdatedEvent{uuid_, diffuseColor_, specularColor_, shininess_, textureUUID_});
 }
 
 void Material::SetSpecularColor(const glm::vec3& color) {
     specularColor_ = color;
+    eventBus_->Publish(MaterialUpdatedEvent{uuid_, diffuseColor_, specularColor_, shininess_, textureUUID_});
 }
 
-
-void Material::SetRoughness(float roughness) {
-    roughness_ = roughness < 0.0f ? 0.0f : (roughness > 1.0f ? 1.0f : roughness);
+void Material::SetShininess(float shininess) {
+    shininess_ = shininess;
+    eventBus_->Publish(MaterialUpdatedEvent{uuid_, diffuseColor_, specularColor_, shininess_, textureUUID_});
 }
 
-void Material::SetMetallic(float metallic) {
-    metallic_ = metallic < 0.0f ? 0.0f : (metallic > 1.0f ? 1.0f : metallic);
+void Material::SetTextureUUID(const std::string& textureUUID) {
+    textureUUID_ = textureUUID;
+    eventBus_->Publish(MaterialUpdatedEvent{uuid_, diffuseColor_, specularColor_, shininess_, textureUUID_});
 }
 
-//------------------- 属性获取方法实现 -------------------//
-glm::vec3 Material::GetDiffuseColor() const {
-    return diffuseColor_;
+void Material::BindShader(const std::string& vertexPath, const std::string& fragmentPath) {
+    vertexShaderPath_ = vertexPath;
+    fragmentShaderPath_ = fragmentPath;
+    eventBus_->Publish(MaterialUpdatedEvent{uuid_, diffuseColor_, specularColor_, shininess_, textureUUID_});
 }
 
-glm::vec3 Material::GetSpecularColor() const {
-    return specularColor_;
-}
-
-
-float Material::GetRoughness() const {
-    return roughness_;
-}
-
-float Material::GetMetallic() const {
-    return metallic_;
-}
-
-//------------------- 核心绑定逻辑 -------------------//
-void Material::Bind(const std::string& vertexShaderPath, const std::string& fragmentShaderPath) {
-    // 获取着色器程序ID
-    GLuint programID = shaderManager_->GetShaderProgram(vertexShaderPath, fragmentShaderPath);
-    if (programID == 0) {
-        throw std::runtime_error("Material::Bind: 着色器未加载 - " +
-                                 vertexShaderPath + " + " + fragmentShaderPath);
+void Material::Apply() const {
+    if (!vertexShaderPath_.empty() && !fragmentShaderPath_.empty()) {
+        glUniform3fv(glGetUniformLocation(1, "material.diffuse"), 1, glm::value_ptr(diffuseColor_));
+        glUniform3fv(glGetUniformLocation(1, "material.specular"), 1, glm::value_ptr(specularColor_));
+        glUniform1f(glGetUniformLocation(1, "material.shininess"), shininess_);
+        // 纹理绑定由 MaterialManager 或外部渲染逻辑处理
     }
-
-    // 应用Uniform设置
-    ApplyUniforms(programID);
 }
 
-void Material::ApplyUniforms(GLuint programID) const {
-    glUseProgram(programID);
+void Material::SubscribeToEvents() {
+    eventBus_->Subscribe<MaterialUpdatedEvent>([this](const MaterialUpdatedEvent& event) {
+        OnMaterialUpdated(event);
+    });
+}
 
-    // 设置漫反射纹理
-    if (diffuseTexture_) {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, diffuseTexture_->id);
-        GLint loc = glGetUniformLocation(programID, "u_DiffuseTexture");
-        if (loc != -1) glUniform1i(loc, 0);
-    }
-
-    // 设置法线纹理
-    if (normalTexture_) {
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, normalTexture_->id);
-        GLint loc = glGetUniformLocation(programID, "u_NormalTexture");
-        if (loc != -1) glUniform1i(loc, 1);
-    }
-
-    // 设置颜色Uniform
-    GLint loc = glGetUniformLocation(programID, "u_DiffuseColor");
-    if (loc != -1) glUniform3fv(loc, 1, &diffuseColor_[0]);
-
-    loc = glGetUniformLocation(programID, "u_SpecularColor");
-    if (loc != -1) glUniform3fv(loc, 1, &specularColor_[0]);
-
-    // 设置纹理Uniform
-    if (diffuseTextureID_ != 0) {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, diffuseTextureID_);
-        loc = glGetUniformLocation(programID, "u_DiffuseTexture");
-        if (loc != -1) glUniform1i(loc, 0);
-    }
-
-    if (normalTextureID_ != 0) {
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, normalTextureID_);
-        loc = glGetUniformLocation(programID, "u_NormalTexture");
-        if (loc != -1) glUniform1i(loc, 1);
-    }
-
-    // 设置物理材质属性
-    loc = glGetUniformLocation(programID, "u_Roughness");
-    if (loc != -1) glUniform1f(loc, roughness_);
-
-    loc = glGetUniformLocation(programID, "u_Metallic");
-    if (loc != -1) glUniform1f(loc, metallic_);
+void Material::OnMaterialUpdated(const MaterialUpdatedEvent& event) {
+    if (event.materialUUID != uuid_) return;
+    diffuseColor_ = event.diffuseColor;
+    specularColor_ = event.specularColor;
+    shininess_ = event.shininess;
+    textureUUID_ = event.textureUUID;
 }

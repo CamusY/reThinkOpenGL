@@ -1,5 +1,4 @@
-﻿// ThreadPool.cpp
-#include "ThreadPool.h"
+﻿#include "ThreadPool.h"
 #include <stdexcept>
 #include <sstream>
 
@@ -30,25 +29,6 @@ ThreadPool::~ThreadPool() {
             worker.join();
         }
     }
-}
-
-void ThreadPool::EnqueueTask(std::function<void()> task, int priority) {
-    if (!task) {
-        throw std::invalid_argument("ThreadPool: Cannot enqueue null task");
-    }
-
-    {
-        std::unique_lock<std::mutex> lock(queueMutex);
-        if (stop) {
-            throw std::runtime_error("ThreadPool: Cannot enqueue task after shutdown");
-        }
-
-        // 将任务加入优先级队列
-        tasks.emplace(std::move(task), priority);
-    }
-
-    // 通知一个等待的工作线程
-    condition.notify_one();
 }
 
 void ThreadPool::WaitAll() {

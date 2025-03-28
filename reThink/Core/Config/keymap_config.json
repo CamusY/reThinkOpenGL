@@ -5,6 +5,7 @@
     "rotate_tool": "R",
     "scale_tool": "S",
     "undo": "Ctrl+Z",
+    "redo": "Ctrl+Y",
     "focus_object": "F"
   }
 }

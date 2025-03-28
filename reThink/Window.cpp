@@ -16,8 +16,8 @@
 #include "Tools/ShaderTools/Shader.h"
 #include "./Tools/Model/Model.h"
 #include "./Tools/Editor/Editor.h"
-#include "./Tools/ProjectManager/ProjectManager.h"
-#include "./Tools/WindowState/WindowState.h"
+#include "ProjectManager/ProjectManager.h"
+#include "WindowState/WindowState.h"
 
 
 // 全局变量

@@ -7,10 +7,10 @@
 
 namespace MyRenderer {
 
-const std::string ConfigManager::LAYOUT_CONFIG_DIR = "./Core/Config/layouts/";
+const std::string ConfigManager::LAYOUT_CONFIG_DIR = "./Core/Config/";
 const std::string ConfigManager::KEYMAP_CONFIG_PATH = "./Core/Config/keymap_config.json";
 
-ConfigManager::ConfigManager() : errorCallback_(nullptr), currentLayoutPath_(LAYOUT_CONFIG_DIR + "default.ini") {}
+ConfigManager::ConfigManager() : errorCallback_(nullptr), currentLayoutPath_(LAYOUT_CONFIG_DIR + "layout_config.ini") {}
 
 ConfigManager::~ConfigManager() {}
 
@@ -33,15 +33,15 @@ void ConfigManager::SetLayoutConfigValue(const std::string& windowId, const std:
     if (windowId == "DockSpace") {
         if (key == "id") layoutConfig_.dockSpaceId = value;
         else if (key == "size") {
-            sscanf(value.c_str(), "%d,%d", &layoutConfig_.dockSpaceWidth, &layoutConfig_.dockSpaceHeight);
+            sscanf_s(value.c_str(), "%d,%d", &layoutConfig_.dockSpaceWidth, &layoutConfig_.dockSpaceHeight);
         }
     } else {
         auto it = std::find_if(layoutConfig_.windows.begin(), layoutConfig_.windows.end(),
             [&](const WindowConfig& w) { return w.id == windowId; });
         if (it != layoutConfig_.windows.end()) {
             if (key == "visible") it->visible = (value == "true");
-            else if (key == "pos") sscanf(value.c_str(), "%d,%d", &it->posX, &it->posY);
-            else if (key == "size") sscanf(value.c_str(), "%d,%d", &it->width, &it->height);
+            else if (key == "pos") sscanf_s(value.c_str(), "%d,%d", &it->posX, &it->posY);
+            else if (key == "size") sscanf_s(value.c_str(), "%d,%d", &it->width, &it->height);
             else if (key == "dock") it->dockId = value;
             else if (key == "dock_side") it->dockSide = value;
             else if (key == "floating") it->floating = (value == "true");
@@ -97,10 +97,11 @@ bool ConfigManager::LoadLayoutConfig(const std::string& path) {
     layoutConfig_.windows.clear();
     layoutConfig_.dockSpaceId = reader.Get("DockSpace", "id", "MainDockSpace");
     std::string sizeStr = reader.Get("DockSpace", "size", "1920,1080");
-    sscanf(sizeStr.c_str(), "%d,%d", &layoutConfig_.dockSpaceWidth, &layoutConfig_.dockSpaceHeight);
+    sscanf_s(sizeStr.c_str(), "%d,%d", &layoutConfig_.dockSpaceWidth, &layoutConfig_.dockSpaceHeight);
 
     std::vector<std::string> windowSections = {
-        "Window_ControlPanel", "Window_SceneViewport", "Window_ShaderEditor",
+        "Window_ControlPanel", "Window_SceneViewport",
+        //"Window_ShaderEditor",
         "Window_ProjectTree", "Window_MenuBar", "Window_Animation", "Window_ProceduralWindow"
     };
 
@@ -110,9 +111,9 @@ bool ConfigManager::LoadLayoutConfig(const std::string& path) {
             window.id = reader.Get(section, "id", section.substr(7));
             window.visible = reader.GetBoolean(section, "visible", true);
             std::string posStr = reader.Get(section, "pos", "0,0");
-            sscanf(posStr.c_str(), "%d,%d", &window.posX, &window.posY);
+            sscanf_s(posStr.c_str(), "%d,%d", &window.posX, &window.posY);
             std::string sizeStr = reader.Get(section, "size", "400,400");
-            sscanf(sizeStr.c_str(), "%d,%d", &window.width, &window.height);
+            sscanf_s(sizeStr.c_str(), "%d,%d", &window.width, &window.height);
             window.dockId = reader.Get(section, "dock", "MainDockSpace");
             window.dockSide = reader.Get(section, "dock_side", "center");
             window.floating = reader.GetBoolean(section, "floating", false);

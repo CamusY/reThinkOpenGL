@@ -6,7 +6,7 @@
 #include <vector>
 #include <mutex>
 #include <functional>
-#include "inih/INIReader.h"
+#include "INIReader.h"
 #include "nlohmann/json.hpp"
 
 namespace MyRenderer {

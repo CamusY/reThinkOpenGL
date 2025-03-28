@@ -1,93 +1,96 @@
-﻿// ModelLoader.h
-#pragma once
-#include <memory>
+﻿#ifndef MODEL_LOADER_H
+#define MODEL_LOADER_H
+
 #include <string>
-#include <vector>
-#include <unordered_map>
-#include <glm/glm.hpp>
-#include <assimp/scene.h>
+#include <map>
+#include <memory>
+#include <future>
 #include <assimp/Importer.hpp>
-#include "ThreadPool/ThreadPool.h"
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include "EventBus/EventBus.h"
+#include "ThreadPool/ThreadPool.h"
 #include "EventBus/EventTypes.h"
+class MaterialManager;
 
-// 模型数据结构定义
-struct ModelData {
-    struct Mesh {
-        // OpenGL资源标识符
-        GLuint vao = 0;
-        GLuint vbo = 0;
-        GLuint ebo = 0;
-        
-        // 原始数据
-        std::vector<glm::vec3> vertices;
-        std::vector<glm::vec3> normals;
-        std::vector<glm::vec2> texCoords;
-        std::vector<uint32_t> indices;
-        std::string materialName;
-
-        // 资源状态标记
-        bool buffersInitialized = false;
-    };
-
-    struct Material {
-        glm::vec3 diffuseColor;
-        std::string diffuseTexture;
-        float roughness = 0.5f;
-        float metallic = 0.0f;
-    };
-
-    std::vector<Mesh> meshes;
-    std::unordered_map<std::string, Material> materials;
-    std::string modelUUID;
-    std::string filePath;
-};
-
-
-/**
- * @brief 模型加载器，封装 Assimp 实现多线程异步加载
- * @dependency 强制依赖 ThreadPool 和 EventBus
- */
 class ModelLoader {
 public:
-    
-    void InitializeGLResources();
-    void CleanupGLResources();
     /**
-     * @brief 构造函数注入依赖
-     * @param threadPool 线程池实例（必须非空）
-     * @param eventBus 事件总线实例（必须非空）
-     * @throws std::invalid_argument 参数为空时抛出
+     * @brief 构造函数，初始化 ModelLoader。
+     * @param eventBus 事件总线，用于发布加载和删除事件。
+     * @param threadPool 线程池，用于异步加载模型。
      */
-    ModelLoader(
-        std::shared_ptr<ThreadPool> threadPool,
-        std::shared_ptr<EventBus> eventBus
-    );
+    ModelLoader(std::shared_ptr<EventBus> eventBus, std::shared_ptr<ThreadPool> threadPool, std::shared_ptr<MaterialManager> materialManager);
 
     /**
-     * @brief 异步加载模型文件
-     * @param filePath 模型文件路径（需有效）
-     * @param modelUUID 模型唯一标识符
-     * @throws std::invalid_argument 路径无效时抛出
+     * @brief 析构函数，清理资源。
      */
-    void LoadAsync(const std::string& filePath, const std::string& modelUUID);
+    ~ModelLoader();
 
-    const std::vector<std::shared_ptr<ModelData>>& GetLoadedModels() const;
+    /**
+     * @brief 异步加载模型文件。
+     * @param filepath 模型文件路径（支持 glTF、OBJ 等格式）。
+     * @param priority 任务优先级，默认为 0。
+     * @return std::future<ModelData> 返回加载结果的 future 对象。
+     */
+    std::future<ModelData> LoadModelAsync(const std::string& filepath, int priority = 0);
 
-    std::shared_ptr<ModelData> ProcessScene(
-       const aiScene* scene,
-       const std::string& filePath,
-       const std::string& modelUUID
-   );
+    /**
+     * @brief 删除指定模型并发布删除事件。
+     * @param modelUUID 模型的唯一标识符。
+     */
+    void DeleteModel(const std::string& modelUUID);
 
+    /**
+     * @brief 获取指定模型的数据。
+     * @param modelUUID 模型的唯一标识符。
+     * @return ModelData 模型数据，若不存在则返回空 ModelData。
+     */
+    ModelData GetModelData(const std::string& modelUUID) const;
 
 private:
-    std::shared_ptr<ThreadPool> threadPool_;
-    std::shared_ptr<EventBus> eventBus_;
-    std::vector<std::shared_ptr<ModelData>> loadedModels_;
+    /**
+     * @brief 处理 Assimp 加载的场景数据，转换为 ModelData。
+     * @param filepath 模型文件路径。
+     * @param scene Assimp 加载的场景对象。
+     * @return ModelData 转换后的模型数据。
+     */
+    ModelData ProcessScene(const std::string& filepath, const aiScene* scene);
 
-    void SetupMeshBuffers(ModelData::Mesh& mesh);
-    void ValidateGLState() const;
-    ModelData::Mesh ProcessMesh(aiMesh* mesh);
-    ModelData::Material ProcessMaterial(aiMaterial* mat, const std::string& basePath);
+    /**
+     * @brief 处理 Assimp（Asset Importer）库中的一个节点，包括其子节点和网格数据。
+     * 
+     * @param node 指向 aiNode 对象的指针，表示要处理的节点。
+     * @param scene 指向 aiScene 对象的指针，表示整个场景，用于访问节点和网格数据。
+     * @param modelData ModelData 对象的引用，用于存储处理后的模型数据。
+     * @param parentUUID 父节点的 UUID，用于建立节点之间的层级关系。
+     * 
+     * 该函数主要用于遍历和处理场景中的节点及其子节点。
+     * 它会处理节点的网格数据（如果有），并将相关数据存储到 modelData 对象中。
+     * 函数还通过传递 parentUUID 来处理节点之间的层级关系，建立父子关系。
+     * 注意：该函数不处理节点的变换属性，例如位置、旋转和缩放。
+     */
+    void ProcessNode(const aiNode* node, const aiScene* scene, ModelData& modelData, const std::string& parentUUID);
+
+    /**
+     * @brief 处理 Assimp 的网格数据。
+     * @param mesh Assimp 的网格对象。
+     * @param modelData 目标 ModelData 对象，用于存储顶点和索引数据。
+     */
+    void ProcessMesh(const aiMesh* mesh, ModelData& modelData, const aiScene* scene);
+
+    /**
+     * @brief 生成唯一的 UUID。
+     * @return std::string 生成的 UUID。
+     */
+    std::string GenerateUUID() const;
+
+    std::shared_ptr<EventBus> eventBus_;              // 事件总线实例
+    std::shared_ptr<ThreadPool> threadPool_;          // 线程池实例
+    Assimp::Importer importer_;                       // Assimp 导入器实例
+    std::map<std::string, ModelData> loadedModels_; // 已加载模型的缓存
+    std::shared_ptr<MaterialManager> materialManager_;    // 材质管理器
+    mutable std::mutex mutex_;                        // 互斥锁，确保线程安全
 };
+
+#endif // MODEL_LOADER_H

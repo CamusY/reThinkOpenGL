@@ -1,0 +1,33 @@
+﻿{
+  "algorithms": [
+    {
+      "name": "WFC",
+      "parameters": {
+        "tileSet": {
+          "type": "array",
+          "default": ["tile1.obj", "tile2.obj", "tile3.obj"]
+        },
+        "width": { "type": "int", "default": 5 },
+        "height": { "type": "int", "default": 5 },
+        "depth": { "type": "int", "default": 5 },
+        "adjacencyRules": {
+          "type": "object",
+          "default": {
+            "tile1.obj": ["tile2.obj", "tile3.obj"],
+            "tile2.obj": ["tile1.obj"],
+            "tile3.obj": ["tile1.obj"]
+          }
+        }
+      }
+    },
+    {
+      "name": "LSystem",
+      "parameters": {
+        "axiom": { "type": "string", "default": "F" },
+        "rules": { "type": "string", "default": "F[+F]F[-F]F" },
+        "iterations": { "type": "int", "default": 5 },
+        "angle": { "type": "float", "default": 25.7 }
+      }
+    }
+  ]
+}

@@ -10,6 +10,7 @@
 #include <atomic>
 #include <iostream>
 #include <memory>
+#include<algorithm>
 
 /**
  * @brief EventBus 是一个线程安全的事件总线，用于模块间解耦通信。
@@ -23,6 +24,13 @@ public:
     // 定义订阅者 ID 类型，用于标识和取消订阅
     using SubscriberId = size_t;
 
+    // 优先级枚举定义
+    enum class Priority : uint8_t {
+        High = 0,    // 最高优先级（如渲染、交互事件）
+        Normal = 1,  // 普通优先级（默认）
+        Low = 2      // 低优先级（如日志、后台任务）
+    };
+    
     /**
      * @brief 构造函数，初始化 EventBus。
      */
@@ -45,7 +53,8 @@ public:
      * @return SubscriberId 订阅者 ID，用于后续取消订阅。
      */
     template<typename EventType>
-    SubscriberId Subscribe(std::function<void(const EventType&)> callback) {
+    SubscriberId Subscribe(std::function<void(const EventType&)> callback, 
+                          Priority priority = Priority::Normal) {
         std::lock_guard<std::mutex> lock(mutex_);
         auto typeIndex = std::type_index(typeid(EventType));
         auto& subscribers = subscribers_[typeIndex];
@@ -56,16 +65,20 @@ public:
         // 将回调函数包装为 void(const void*) 类型，并存储
         subscribers.push_back(Subscriber{
             id,
-            [callback, typeIndex](const void* event) {  // 显式捕获 typeIndex
+            [callback, typeIndex](const void* event) {
                 try {
                     callback(*static_cast<const EventType*>(event));
                 } catch (const std::exception& e) {
                     std::cerr << "Error in event callback for type " 
                               << typeIndex.name() << ": " << e.what() << std::endl;
                 }
-            }
+            },
+            priority  // 新增优先级字段
         });
-
+        std::sort(subscribers.begin(), subscribers.end(), 
+                          [](const Subscriber& a, const Subscriber& b) {
+                              return a.priority < b.priority;
+                          });
         return id;
     }
 
@@ -80,18 +93,17 @@ public:
         auto it = subscribers_.find(typeIndex);
         if (it != subscribers_.end()) {
             auto& subscribers = it->second;
-            // 使用 std::remove_if 移除指定 ID 的订阅者
             subscribers.erase(
                 std::remove_if(subscribers.begin(), subscribers.end(),
                     [id](const Subscriber& sub) { return sub.id == id; }),
                 subscribers.end()
             );
-            // 如果订阅者列表为空，清理该类型条目
             if (subscribers.empty()) {
                 subscribers_.erase(typeIndex);
             }
         }
     }
+
 
     /**
      * @brief 发布指定类型的事件，通知所有订阅者。
@@ -101,13 +113,18 @@ public:
      */
     template<typename EventType>
     void Publish(const EventType& event) {
-        std::lock_guard<std::mutex> lock(mutex_);
-        auto typeIndex = std::type_index(typeid(EventType));
-        auto it = subscribers_.find(typeIndex);
-        if (it != subscribers_.end()) {
-            for (const auto& subscriber : it->second) {
-                subscriber.callback(&event);
+        std::vector<Subscriber> subscribersCopy;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            auto typeIndex = std::type_index(typeid(EventType));
+            auto it = subscribers_.find(typeIndex);
+            if (it != subscribers_.end()) {
+                subscribersCopy = it->second; // 复制当前订阅者列表
             }
+        }
+        // 在锁外执行回调
+        for (const auto& subscriber : subscribersCopy) {
+            subscriber.callback(&event);
         }
     }
 
@@ -118,6 +135,7 @@ private:
     struct Subscriber {
         SubscriberId id;                    // 订阅者唯一标识
         std::function<void(const void*)> callback;  // 回调函数，接收事件指针
+        Priority priority;
     };
 
     std::mutex mutex_;  // 互斥锁，确保线程安全

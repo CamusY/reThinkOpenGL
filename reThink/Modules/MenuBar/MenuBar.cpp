@@ -2,7 +2,7 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-#include "imgui-docking/ImGuiFileDialog.h"
+#include <imgui-backends/ImGuiFileDialog.h>
 #include "ModelLoader/ModelLoader.h"
 
 namespace MyRenderer {

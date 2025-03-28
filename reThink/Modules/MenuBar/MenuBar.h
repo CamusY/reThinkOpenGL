@@ -5,7 +5,7 @@
 #include <string>
 #include "EventBus/EventBus.h"
 #include "Config/ConfigManager.h"
-#include "imgui-docking/imgui.h"
+#include <imgui.h>
 
 namespace MyRenderer {
 

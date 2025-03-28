@@ -97,7 +97,17 @@ private:
     // 启用ADL的反序列化包装器
     template<typename T>
     static auto from_json_adl(const nlohmann::json& j, T& obj) {
-        nlohmann::adl_serializer<T>::from_json(j, obj);
+        if constexpr (std::is_same_v<T, nlohmann::json>) {
+            obj = j; // 处理 JSON 对象本身的特殊情况
+        } else {
+            // 使用 ADL 查找反序列化函数
+            using nlohmann::adl_serializer;
+            if constexpr (std::is_default_constructible_v<T>) {
+                obj = j.get<T>(); // 更简单的方式
+            } else {
+                adl_serializer<T>::from_json(j, obj);
+            }
+        }
     }
     // 验证文件路径有效性
     static void validateFilePath(const fs::path& path, bool checkWritable = false) {
@@ -126,12 +136,13 @@ namespace nlohmann {
         }
 
         static void from_json(const json& j, glm::vec3& vec) {
-            if (j.size() != 3) throw std::invalid_argument("无效的vec3数据");
+            if (j.size() != 3) throw std::invalid_argument("Invalid vec3 data: array must have 3 elements");
             vec.x = j[0];
             vec.y = j[1];
             vec.z = j[2];
         }
     };
+
     template<>
     struct adl_serializer<glm::mat4> {
         static void to_json(json& j, const glm::mat4& mat) {
@@ -147,7 +158,7 @@ namespace nlohmann {
 
         static void from_json(const json& j, glm::mat4& mat) {
             if (!j.is_array() || j.size() != 16) {
-                throw std::invalid_argument("无效的mat4数据格式");
+                throw std::invalid_argument("Invalid mat4 data: array must have 16 elements");
             }
             
             // 按列主序解析

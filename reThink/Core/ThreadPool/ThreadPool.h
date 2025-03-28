@@ -1,5 +1,4 @@
-﻿// ThreadPool.h
-#ifndef THREADPOOL_H
+﻿#ifndef THREADPOOL_H
 #define THREADPOOL_H
 
 #include <functional>
@@ -10,8 +9,8 @@
 #include <condition_variable>
 #include <atomic>
 #include <stdexcept>
+#include <future>
 
-// ThreadPool 模块，提供异步任务执行服务
 class ThreadPool {
 public:
     // 构造函数，初始化线程池，参数为线程数，默认为硬件并发线程数
@@ -20,8 +19,9 @@ public:
     // 析构函数，停止线程池并清理资源
     ~ThreadPool();
 
-    // 将任务加入队列，支持优先级，默认优先级为 0（最低）
-    void EnqueueTask(std::function<void()> task, int priority = 0);
+    // 将任务加入队列，返回 std::future 以跟踪任务完成状态，支持优先级，默认优先级为 0（最低）
+    template<typename F>
+    auto EnqueueTask(F&& task, int priority = 0) -> std::future<decltype(task())>;
 
     // 等待所有任务完成
     void WaitAll();
@@ -70,5 +70,33 @@ private:
     // 错误回调函数
     std::function<void(const std::string&)> errorCallback;
 };
+
+template<typename F>
+auto ThreadPool::EnqueueTask(F&& task, int priority) -> std::future<decltype(task())> {
+    using ReturnType = decltype(task());
+    
+    // 创建 packaged_task 以支持返回值
+    auto packagedTask = std::make_shared<std::packaged_task<ReturnType()>>(std::forward<F>(task));
+    std::future<ReturnType> future = packagedTask->get_future();
+
+    if (!packagedTask) {
+        throw std::invalid_argument("ThreadPool: Cannot enqueue null task");
+    }
+
+    {
+        std::unique_lock<std::mutex> lock(queueMutex);
+        if (stop) {
+            throw std::runtime_error("ThreadPool: Cannot enqueue task after shutdown");
+        }
+
+        // 将任务包装为 void() 函数，放入优先级队列
+        tasks.emplace([packagedTask]() { (*packagedTask)(); }, priority);
+    }
+
+    // 通知一个等待的工作线程
+    condition.notify_one();
+
+    return future;
+}
 
 #endif // THREADPOOL_H

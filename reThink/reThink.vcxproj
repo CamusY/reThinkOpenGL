@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>.\Shaders;.\includes;.\Tools;.\Core;.\Modules;.\Resources;C:\MinGW</IncludePath>
+    <IncludePath>.\Core;.\Shaders;.\includes;.\Procedural;.\Modules;.\Resources;C:\MinGW</IncludePath>
     <LibraryPath>.\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -110,6 +110,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/utf-8</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,107 +140,29 @@
     <ClCompile Include="Core\Config\ConfigManager.cpp" />
     <ClCompile Include="Core\Utils\JSONSerializer.cpp" />
     <ClCompile Include="Core\Utils\MathUtils.cpp" />
-    <ClCompile Include="includes\imgui-docking\imgui.cpp" />
-    <ClCompile Include="includes\imgui-docking\ImGuiFileDialog.cpp" />
-    <ClCompile Include="includes\imgui-docking\imgui_demo.cpp" />
-    <ClCompile Include="includes\imgui-docking\imgui_draw.cpp" />
-    <ClCompile Include="includes\imgui-docking\imgui_impl_glfw.cpp" />
-    <ClCompile Include="includes\imgui-docking\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="includes\imgui-docking\imgui_tables.cpp" />
-    <ClCompile Include="includes\imgui-docking\imgui_widgets.cpp" />
-    <ClCompile Include="includes\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
-    <ClCompile Include="includes\imgui-docking\misc\freetype\imgui_freetype.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>Default</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\reThink.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\reThink.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <LinkCompiled>true</LinkCompiled>
-      <AdditionalIncludeDirectories>;C:\Code\Vcpkg\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="includes\imgui-docking\TextEditor.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="includes\imgui-backends\ImGuiFileDialog.cpp" />
+    <ClCompile Include="includes\imgui-backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="includes\imgui-backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="includes\imgui-backends\TextEditor.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Modules\Animation\Animation.cpp" />
+    <ClCompile Include="Modules\ControlPanel\ControlPanel.cpp" />
     <ClCompile Include="Modules\InputHandler\InputHandler.cpp" />
     <ClCompile Include="Modules\MenuBar\MenuBar.cpp" />
+    <ClCompile Include="Modules\ProceduralWindow\ProceduralWindow.cpp" />
     <ClCompile Include="Modules\ProjectManager\ProjectManager.cpp" />
     <ClCompile Include="Modules\ProjectTree\ProjectTree.cpp" />
     <ClCompile Include="Modules\SceneViewport\SceneViewport.cpp" />
-    <ClCompile Include="Modules\ShaderEditor\ShaderEditor.cpp" />
     <ClCompile Include="Modules\Window\Window.cpp" />
+    <ClCompile Include="Procedural\IProceduralGenerator\IProceduralGenerator.cpp" />
+    <ClCompile Include="Procedural\LSystemGenerator\LSystemGenerator.cpp" />
+    <ClCompile Include="Procedural\WFCGenerator\WFCGenerator.cpp" />
     <ClCompile Include="Resources\AnimationManager\AnimationManager.cpp" />
+    <ClCompile Include="Resources\MaterialManager\MaterialManager.cpp" />
     <ClCompile Include="Resources\Material\Material.cpp" />
     <ClCompile Include="Resources\ModelLoader\ModelLoader.cpp" />
     <ClCompile Include="Resources\ShaderManager\ShaderManager.cpp" />
-    <ClCompile Include="Resources\TextureManager\Texture.cpp" />
-    <ClCompile Include="Resources\TextureManager\TextureManager.cpp" />
-    <ClCompile Include="Tools\Editor\Editor.cpp">
+    <ClCompile Include="Resources\TextureManager\TextureManager.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
@@ -314,328 +237,56 @@
       <LinkCompiled>true</LinkCompiled>
       <AdditionalIncludeDirectories>;C:\Code\Vcpkg\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Tools\Model\Model.cpp" />
-    <ClCompile Include="Tools\ShaderTools\CheckShaderCompileErrors.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\reThink.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\reThink.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <LinkCompiled>true</LinkCompiled>
-      <AdditionalIncludeDirectories>;C:\Code\Vcpkg\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="Tools\ShaderTools\Shader.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\reThink.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\reThink.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <LinkCompiled>true</LinkCompiled>
-      <AdditionalIncludeDirectories>;C:\Code\Vcpkg\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="Tools\ShaderTools\ShaderLoader.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\reThink.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\reThink.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <LinkCompiled>true</LinkCompiled>
-      <AdditionalIncludeDirectories>;C:\Code\Vcpkg\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="Tools\WindowState\WindowState.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Resources\Texture\Texture.cpp" />
+    <ClCompile Include="Resources\UndoRedoManager\UndoRedoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Config\ConfigManager.h" />
     <ClInclude Include="Core\EventBus\EventBus.h" />
     <ClInclude Include="Core\EventBus\EventTypes.h" />
-    <ClInclude Include="Core\ThreadPool\ThreadPool.cpp" />
+    <ClCompile Include="Core\ThreadPool\ThreadPool.cpp" />
     <ClInclude Include="Core\ThreadPool\ThreadPool.h" />
     <ClInclude Include="Core\Utils\JSONSerializer.h" />
     <ClInclude Include="Core\Utils\MathUtils.h" />
-    <ClInclude Include="includes\imgui-docking\imconfig.h" />
-    <ClInclude Include="includes\imgui-docking\imgui.h" />
-    <ClInclude Include="includes\imgui-docking\ImGuiFileDialog.h" />
-    <ClInclude Include="includes\imgui-docking\ImGuiFileDialogConfig.h" />
-    <ClInclude Include="includes\imgui-docking\imgui_impl_glfw.h" />
-    <ClInclude Include="includes\imgui-docking\imgui_impl_opengl3.h" />
-    <ClInclude Include="includes\imgui-docking\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="includes\imgui-docking\imgui_internal.h" />
-    <ClInclude Include="includes\imgui-docking\imstb_rectpack.h" />
-    <ClInclude Include="includes\imgui-docking\imstb_textedit.h" />
-    <ClInclude Include="includes\imgui-docking\imstb_truetype.h" />
-    <ClInclude Include="includes\imgui-docking\misc\cpp\imgui_stdlib.h" />
-    <ClInclude Include="includes\imgui-docking\misc\freetype\imgui_freetype.h" />
-    <ClInclude Include="includes\imgui-docking\misc\single_file\imgui_single_file.h" />
-    <ClInclude Include="includes\imgui-docking\TextEditor.h" />
+    <ClInclude Include="includes\imgui-backends\ImGuiFileDialog.h" />
+    <ClInclude Include="includes\imgui-backends\ImGuiFileDialogConfig.h" />
+    <ClInclude Include="includes\imgui-backends\imgui_impl_glfw.h" />
+    <ClInclude Include="includes\imgui-backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="includes\imgui-backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="includes\imgui-backends\TextEditor.h" />
+    <ClInclude Include="includes\stb_image.h" />
     <ClInclude Include="Modules\Animation\Animation.h" />
+    <ClInclude Include="Modules\ControlPanel\ControlPanel.h" />
     <ClInclude Include="Modules\InputHandler\InputHandler.h" />
     <ClInclude Include="Modules\MenuBar\MenuBar.h" />
+    <ClInclude Include="Modules\ProceduralWindow\ProceduralWindow.h" />
     <ClInclude Include="Modules\ProjectManager\ProjectManager.h" />
     <ClInclude Include="Modules\ProjectTree\ProjectTree.h" />
     <ClInclude Include="Modules\SceneViewport\SceneViewport.h" />
-    <ClInclude Include="Modules\ShaderEditor\ShaderEditor.h" />
     <ClInclude Include="Modules\Window\Window.h" />
+    <ClInclude Include="Procedural\IProceduralGenerator\IProceduralGenerator.h" />
+    <ClInclude Include="Procedural\LSystemGenerator\LSystemGenerator.h" />
+    <ClInclude Include="Procedural\WFCGenerator\WFCGenerator.h" />
     <ClInclude Include="Resources\AnimationManager\AnimationManager.h" />
+    <ClInclude Include="Resources\MaterialManager\MaterialManager.h" />
     <ClInclude Include="Resources\Material\Material.h" />
     <ClInclude Include="Resources\ModelLoader\ModelLoader.h" />
     <ClInclude Include="Resources\ShaderManager\ShaderManager.h" />
-    <ClInclude Include="Resources\TextureManager\Texture.h" />
     <ClInclude Include="Resources\TextureManager\TextureManager.h" />
-    <ClInclude Include="Tools\Editor\Editor.h" />
-    <ClInclude Include="Tools\Model\Model.h" />
-    <ClInclude Include="Tools\ShaderTools\CheckShaderCompileErrors.h" />
-    <ClInclude Include="Tools\ShaderTools\Shader.h" />
-    <ClInclude Include="Tools\ShaderTools\ShaderLoader.h" />
-    <ClInclude Include="Tools\WindowState\WindowState.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\shader.fs" />
-    <None Include="Shaders\shader.vs" />
+    <ClInclude Include="Resources\Texture\Texture.h" />
+    <ClInclude Include="Resources\UndoRedoManager\UndoRedoManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Core\Config\keymap_config.json" />
     <Content Include="Core\Config\layout_config.ini" />
-    <Content Include="includes\imgui-docking\.editorconfig" />
-    <Content Include="includes\imgui-docking\.gitattributes" />
-    <Content Include="includes\imgui-docking\.github\FUNDING.yml" />
-    <Content Include="includes\imgui-docking\.github\ISSUE_TEMPLATE\config.yml" />
-    <Content Include="includes\imgui-docking\.github\ISSUE_TEMPLATE\issue_template.yml" />
-    <Content Include="includes\imgui-docking\.github\pull_request_template.md" />
-    <Content Include="includes\imgui-docking\.github\workflows\build.yml" />
-    <Content Include="includes\imgui-docking\.github\workflows\manual.yml" />
-    <Content Include="includes\imgui-docking\.github\workflows\scheduled.yml" />
-    <Content Include="includes\imgui-docking\.github\workflows\static-analysis.yml" />
-    <Content Include="includes\imgui-docking\.gitignore" />
-    <Content Include="includes\imgui-docking\docs\BACKENDS.md" />
-    <Content Include="includes\imgui-docking\docs\CHANGELOG.txt" />
-    <Content Include="includes\imgui-docking\docs\CONTRIBUTING.md" />
-    <Content Include="includes\imgui-docking\docs\EXAMPLES.md" />
-    <Content Include="includes\imgui-docking\docs\FAQ.md" />
-    <Content Include="includes\imgui-docking\docs\FONTS.md" />
-    <Content Include="includes\imgui-docking\docs\README.md" />
-    <Content Include="includes\imgui-docking\docs\TODO.txt" />
-    <Content Include="includes\imgui-docking\LICENSE.txt" />
-    <Content Include="includes\imgui-docking\misc\cpp\README.txt" />
-    <Content Include="includes\imgui-docking\misc\debuggers\imgui.gdb" />
-    <Content Include="includes\imgui-docking\misc\debuggers\imgui.natstepfilter" />
-    <Content Include="includes\imgui-docking\misc\debuggers\README.txt" />
-    <Content Include="includes\imgui-docking\misc\fonts\Cousine-Regular.ttf" />
-    <Content Include="includes\imgui-docking\misc\fonts\DroidSans.ttf" />
-    <Content Include="includes\imgui-docking\misc\fonts\Karla-Regular.ttf" />
-    <Content Include="includes\imgui-docking\misc\fonts\ProggyClean.ttf" />
-    <Content Include="includes\imgui-docking\misc\fonts\ProggyTiny.ttf" />
-    <Content Include="includes\imgui-docking\misc\fonts\Roboto-Medium.ttf" />
-    <Content Include="includes\imgui-docking\misc\fonts\SarasaMonoSC-Regular.ttf" />
-    <Content Include="includes\imgui-docking\misc\fonts\SarasaMonoSlabSC-Regular.ttf" />
-    <Content Include="includes\imgui-docking\misc\freetype\README.md" />
-    <Content Include="includes\imgui-docking\misc\README.txt" />
+    <Content Include="Core\Config\ProceduralRegister.json" />
     <Content Include="SarasaMonoSlabSC-Regular.ttf" />
+    <Content Include="Shaders\default.vs" />
+    <Content Include="Shaders\default_line.vs" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="includes\imgui-docking\misc\debuggers\imgui.natvis" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Modules\ControlPanel\" />
-    <Folder Include="Procedural\" />
+    <Compile Include="Shaders\default.fs" />
+    <Compile Include="Shaders\default_line.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

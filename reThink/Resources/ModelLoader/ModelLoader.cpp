@@ -1,239 +1,169 @@
-﻿// ModelLoader.cpp
-#include "ModelLoader.h"
-#include <filesystem>
-#include <fstream>
-#include <sstream>
+﻿#include "ModelLoader.h"
 #include <stdexcept>
-#include <assimp/postprocess.h>
-#include <glad/glad.h>
+#include <sstream>
+#include <random>
+#include <chrono>
+#include <glm/gtc/matrix_transform.hpp>
+#include "MaterialManager/MaterialManager.h"
 
-namespace fs = std::filesystem;
-void ModelLoader::InitializeGLResources() {
-    // 确保在主线程调用
-    if (!gladLoadGL()) {
-        throw std::runtime_error("Failed to initialize OpenGL loader");
-    }
-}
-
-void ModelLoader::CleanupGLResources()
-{
-    // 遍历所有加载的模型清理资源
-    for (auto& model : loadedModels_) {
-        for (auto& mesh : model->meshes) {
-            if (mesh.buffersInitialized) {
-                glDeleteVertexArrays(1, &mesh.vao);
-                glDeleteBuffers(1, &mesh.vbo);
-                glDeleteBuffers(1, &mesh.ebo);
-                mesh.buffersInitialized = false;
-            }
-        }
-    }
-}
-
-
-// 构造函数
-ModelLoader::ModelLoader(
-    std::shared_ptr<ThreadPool> threadPool,
-    std::shared_ptr<EventBus> eventBus
-) : threadPool_(threadPool), eventBus_(eventBus) {
-    if (!threadPool_ || !eventBus_) {
-        throw std::invalid_argument("ModelLoader: 依赖项不能为空");
-    }
-}
-
-
-
-// 异步加载入口
-void ModelLoader::LoadAsync(const std::string& filePath, const std::string& modelUUID) {
-    // 防御性检查
-    if (!fs::exists(filePath)) {
-        throw std::invalid_argument("文件不存在: " + filePath);
-    }
-    if (modelUUID.empty()) {
-        throw std::invalid_argument("modelUUID 不能为空");
-    }
-
-    // 提交到线程池
-    threadPool_->Enqueue([=]() {
-        try {
-            Assimp::Importer importer;
-            const aiScene* scene = importer.ReadFile(
-                filePath,
-                aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_FlipUVs
-            );
-
-            if (!scene || !scene->mRootNode) {
-                throw std::runtime_error("模型加载失败: " + std::string(importer.GetErrorString()));
-            }
-
-            auto modelData = ProcessScene(scene, filePath, modelUUID);
-            
-            // 发布成功事件
-            EventTypes::ModelLoadedEvent event;
-            event.modelUUID = modelUUID;
-            event.filePath = filePath;
-            event.data = modelData;
-            eventBus_->Publish(event);
-        } catch (const std::exception& e) {
-            // 发布失败事件
-            EventTypes::ModelLoadFailedEvent event;
-            event.modelUUID = modelUUID;
-            event.filePath = filePath;
-            event.errorMessage = e.what();
-            eventBus_->Publish(event);
-        }
+ModelLoader::ModelLoader(std::shared_ptr<EventBus> eventBus, std::shared_ptr<ThreadPool> threadPool, std::shared_ptr<MaterialManager> materialManager)
+    : eventBus_(std::move(eventBus)), threadPool_(std::move(threadPool)), materialManager_(std::move(materialManager)) {
+    if (!eventBus_) throw std::invalid_argument("ModelLoader: EventBus 不能为空");
+    if (!threadPool_) throw std::invalid_argument("ModelLoader: ThreadPool 不能为空");
+    if (!materialManager_) throw std::invalid_argument("ModelLoader: MaterialManager 不能为空");
+    threadPool_->SetErrorCallback([this](const std::string& errorMsg) {
+        std::cerr << errorMsg << std::endl;
     });
+    // 订阅层级更新事件
+    eventBus_->Subscribe<MyRenderer::Events::HierarchyUpdateEvent>(
+        [this](const MyRenderer::Events::HierarchyUpdateEvent& event) {
+            std::lock_guard<std::mutex> lock(mutex_);
+            for (auto& [uuid, model] : loadedModels_) {
+                if (model.parentUUID == event.parentUUID) {
+                    model.transform = event.transform * model.transform; // 应用父变换
+                    eventBus_->Publish(MyRenderer::Events::ModelTransformedEvent{uuid, model.transform});
+                }
+            }
+        });
 }
 
-const std::vector<std::shared_ptr<ModelData>>& ModelLoader::GetLoadedModels() const
-{
-    return loadedModels_;
+ModelLoader::~ModelLoader() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    loadedModels_.clear();
 }
 
-// 处理场景数据
-std::shared_ptr<ModelData> ModelLoader::ProcessScene(
-    const aiScene* scene,
-    const std::string& filePath,
-    const std::string& modelUUID
-) {
-    auto data = std::make_shared<ModelData>();
-    data->modelUUID = modelUUID;
-    data->filePath = filePath;
-    const fs::path basePath = fs::path(filePath).parent_path();
+std::future<ModelData> ModelLoader::LoadModelAsync(const std::string& filepath, int priority) {
+    if (filepath.empty()) throw std::invalid_argument("ModelLoader: 文件路径不能为空");
+    return threadPool_->EnqueueTask([this, filepath]() -> ModelData {
+        const aiScene* scene = importer_.ReadFile(filepath,
+            aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
+        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+            throw std::runtime_error("ModelLoader: 无法加载模型 '" + filepath + "': " + importer_.GetErrorString());
+        }
+        ModelData modelData = ProcessScene(filepath, scene);
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            loadedModels_[modelData.uuid] = modelData;
+        }
+        eventBus_->Publish(MyRenderer::Events::ModelLoadedEvent{modelData});
+        return modelData;
+    }, priority);
+}
 
-    // 处理网格
-    for (unsigned i = 0; i < scene->mNumMeshes; ++i) {
-        auto mesh = ProcessMesh(scene->mMeshes[i]);
-        SetupMeshBuffers(mesh); // 新增资源初始化
-        data->meshes.push_back(std::move(mesh));
+void ModelLoader::DeleteModel(const std::string& modelUUID) {
+    if (modelUUID.empty()) throw std::invalid_argument("ModelLoader: 模型 UUID 不能为空");
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = loadedModels_.find(modelUUID);
+    if (it != loadedModels_.end()) {
+        eventBus_->Publish(MyRenderer::Events::ModelDeletedEvent{modelUUID});
+        loadedModels_.erase(it);
+    }
+}
+
+ModelData ModelLoader::GetModelData(const std::string& modelUUID) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = loadedModels_.find(modelUUID);
+    return (it != loadedModels_.end()) ? it->second : ModelData{};
+}
+
+ModelData ModelLoader::ProcessScene(const std::string& filepath, const aiScene* scene) {
+    ModelData modelData;
+    modelData.uuid = GenerateUUID();
+    modelData.filepath = filepath;
+    modelData.transform = glm::mat4(1.0f);
+    modelData.vertexShaderPath = "";
+    modelData.fragmentShaderPath = "";
+    modelData.parentUUID = "";
+
+    ProcessNode(scene->mRootNode, scene, modelData, "");
+    return modelData;
+}
+
+void ModelLoader::ProcessNode(const aiNode* node, const aiScene* scene, ModelData& modelData, const std::string& parentUUID) {
+    aiMatrix4x4 aiTransform = node->mTransformation;
+    glm::mat4 transform(
+        aiTransform.a1, aiTransform.b1, aiTransform.c1, aiTransform.d1,
+        aiTransform.a2, aiTransform.b2, aiTransform.c2, aiTransform.d2,
+        aiTransform.a3, aiTransform.b3, aiTransform.c3, aiTransform.d3,
+        aiTransform.a4, aiTransform.b4, aiTransform.c4, aiTransform.d4
+    );
+    modelData.transform = transform;
+    modelData.parentUUID = parentUUID;
+
+    for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
+        ProcessMesh(scene->mMeshes[node->mMeshes[i]], modelData, scene);
+    }
+
+    for (unsigned int i = 0; i < node->mNumChildren; ++i) {
+        ModelData childModelData;
+        childModelData.uuid = GenerateUUID();
+        childModelData.filepath = modelData.filepath;
+        childModelData.vertexShaderPath = "";
+        childModelData.fragmentShaderPath = "";
+        ProcessNode(node->mChildren[i], scene, childModelData, modelData.uuid);
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            loadedModels_[childModelData.uuid] = childModelData;
+        }
+        eventBus_->Publish(MyRenderer::Events::ModelLoadedEvent{childModelData});
+    }
+}
+
+void ModelLoader::ProcessMesh(const aiMesh* mesh, ModelData& modelData, const aiScene* scene) {
+    // 加载顶点和法线数据
+    for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+        glm::vec3 vertex(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+        modelData.vertices.push_back(vertex);
+        if (mesh->HasNormals()) {
+            glm::vec3 normal(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+            modelData.normals.push_back(normal);
+        } else {
+            // 如果没有法线，可以选择生成默认值或抛出警告
+            modelData.normals.push_back(glm::vec3(0.0f));
+        }
+    }
+
+    // 加载索引数据
+    for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
+        const aiFace& face = mesh->mFaces[i];
+        for (unsigned int j = 0; j < face.mNumIndices; ++j) {
+            modelData.indices.push_back(face.mIndices[j]);
+        }
     }
 
     // 处理材质
-    for (unsigned i = 0; i < scene->mNumMaterials; ++i) {
-        std::string matName = "Material_" + std::to_string(i);
-        data->materials[matName] = ProcessMaterial(scene->mMaterials[i], basePath.string());
-    }
+    if (mesh->mMaterialIndex >= 0) {
+        aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
+        aiColor3D diffuse;
+        aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+        aiColor3D specular;
+        aiMat->Get(AI_MATKEY_COLOR_SPECULAR, specular);
+        float shininess;
+        aiMat->Get(AI_MATKEY_SHININESS, shininess);
 
-    return data;
-}
+        aiString texturePath;
+        std::string filepath = (aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS) ? texturePath.C_Str() : "";
 
-// 处理单个网格
-ModelData::Mesh ModelLoader::ProcessMesh(aiMesh* mesh) {
-    ModelData::Mesh result;
-
-    // 顶点数据
-    for (unsigned i = 0; i < mesh->mNumVertices; ++i) {
-        result.vertices.emplace_back(
-            mesh->mVertices[i].x,
-            mesh->mVertices[i].y,
-            mesh->mVertices[i].z
+        // 委托给 MaterialManager 创建材质
+        std::string materialUUID = materialManager_->LoadMaterial(
+            glm::vec3(diffuse.r, diffuse.g, diffuse.b),
+            glm::vec3(specular.r, specular.g, specular.b),
+            shininess,
+            filepath
         );
-
-        if (mesh->HasNormals()) {
-            result.normals.emplace_back(
-                mesh->mNormals[i].x,
-                mesh->mNormals[i].y,
-                mesh->mNormals[i].z
-            );
-        }
-
-        if (mesh->mTextureCoords[0]) {
-            result.texCoords.emplace_back(
-                mesh->mTextureCoords[0][i].x,
-                mesh->mTextureCoords[0][i].y
-            );
-        }
+        modelData.materialUUIDs.push_back(materialUUID);
     }
-
-    // 索引数据
-    for (unsigned i = 0; i < mesh->mNumFaces; ++i) {
-        const aiFace& face = mesh->mFaces[i];
-        for (unsigned j = 0; j < face.mNumIndices; ++j) {
-            result.indices.push_back(face.mIndices[j]);
-        }
-    }
-
-    return result;
 }
 
-void ModelLoader::SetupMeshBuffers(ModelData::Mesh& mesh) {
-    // 生成缓冲区对象
-    glGenVertexArrays(1, &mesh.vao);
-    glGenBuffers(1, &mesh.vbo);
-    glGenBuffers(1, &mesh.ebo);
-    // 绑定VAO
-    glBindVertexArray(mesh.vao);
-    // 顶点数据 (VBO)
-    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-    glBufferData(GL_ARRAY_BUFFER, 
-        mesh.vertices.size() * sizeof(glm::vec3),
-        mesh.vertices.data(), 
-        GL_STATIC_DRAW
-    );
-    // 索引数据 (EBO)
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-        mesh.indices.size() * sizeof(uint32_t),
-        mesh.indices.data(),
-        GL_STATIC_DRAW
-    );
-    // 属性指针 (位置)
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-    // 法线数据（如果存在）
-    if (!mesh.normals.empty()) {
-        GLuint normalVBO;
-        glGenBuffers(1, &normalVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
-        glBufferData(GL_ARRAY_BUFFER,
-            mesh.normals.size() * sizeof(glm::vec3),
-            mesh.normals.data(),
-            GL_STATIC_DRAW
-        );
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-    }
-    // 解绑
-    glBindVertexArray(0);
-    mesh.buffersInitialized = true;
-    ValidateGLState();
-}
+std::string ModelLoader::GenerateUUID() const {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(0, 15);
+    static std::uniform_int_distribution<> dis2(8, 11);
 
-
-
-// 处理材质
-ModelData::Material ModelLoader::ProcessMaterial(aiMaterial* mat, const std::string& basePath) {
-    ModelData::Material result;
-
-    // 漫反射颜色
-    aiColor3D color;
-    if (mat->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
-        result.diffuseColor = {color.r, color.g, color.b};
-    }
-
-    float roughness;
-    if (mat->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughness) == AI_SUCCESS) {
-        result.roughness = roughness;
-    }
-    
-    float metallic;
-    if (mat->Get(AI_MATKEY_METALLIC_FACTOR, metallic) == AI_SUCCESS) {
-        result.metallic = metallic;
-    }
-
-    // 漫反射贴图
-    aiString path;
-    if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {
-        result.diffuseTexture = (fs::path(basePath) / path.C_Str()).string();
-    }
-
-    return result;
-}
-void ModelLoader::ValidateGLState() const {
-    GLenum err = glGetError();
-    if (err != GL_NO_ERROR) {
-        std::stringstream ss;
-        ss << "OpenGL错误: 0x" << std::hex << err;
-        throw std::runtime_error(ss.str());
-    }
+    auto now = std::chrono::system_clock::now().time_since_epoch().count();
+    std::stringstream ss;
+    ss << std::hex << now << dis(gen) << dis2(gen);
+    return ss.str();
 }
